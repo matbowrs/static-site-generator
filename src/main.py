@@ -2,6 +2,7 @@ from textnode import TextNode
 from textnode import TextType
 from htmlnode import HTMLNode
 from htmlnode import LeafNode
+from htmlnode import ParentNode
 
 def main():
     # Text Nodes
@@ -19,8 +20,22 @@ def main():
 
     # Leaf Nodes
     leaf_node_p = LeafNode("p", "Some text to render!")
-    print(leaf_node_p.to_html())
+    print(f"leaf_node_p: {leaf_node_p.to_html()}")
     leaf_node_a = LeafNode("a", "Click me!", {"href": "https://www.google.com", "target": "_blank"})
-    print(leaf_node_a.to_html())
+    print(f"leaf_node_a to_html(): {leaf_node_a.to_html()}")
+    print(f"leaf_node_a: {leaf_node_a}")
+
+    # Parent Nodes:
+    parent_node = ParentNode(
+        "p", [
+            LeafNode("b", "Bold text"),
+            LeafNode(None, "Normal text"),
+            LeafNode("i", "italic text"),
+            LeafNode(None, "Normal text"),
+        ],
+    )
+    print(f"parent node -> {parent_node.__repr__()}")
+    print(f"attempt to use to_html")
+    parent_node.to_html()
 if __name__ == "__main__":
     main()

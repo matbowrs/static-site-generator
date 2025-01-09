@@ -19,7 +19,7 @@ class HTMLNode:
             return ""
         # Make copy to ensure no accidental alterations
         test_props = self.props.copy()
-        props_builder = list(map(lambda x: f'{x}="{test_props[x]}"', test_props))
+        props_builder = list(map(lambda x: f' {x}="{test_props[x]}"', test_props))
         #print(" ".join(props_builder))
         return " ".join(props_builder)
 
@@ -35,19 +35,26 @@ class LeafNode(HTMLNode):
             raise ValueError("All leaf nodes must have a value. No value was found.")
         if not self.tag:
             return self.value
-        if self.props:
-            # If props exist, we can pass them in. Need this statement because they are None by default and 
-            # the interpreter doesn't like when there's that potential I guess
-            return f'<{self.tag} {self.props_to_html()}>{self.value}</{self.tag}>'
-
         # Else we render a tag
-        return f'<{self.tag}>{self.value}</{self.tag}>'
+        return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
+    def __repr__(self):
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
 
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
-        super().__init__(tag, children, props)
+        super().__init__(tag, None, children, props)
     def to_html(self):
         if not self.tag:
             raise ValueError("Missing tag.")
         if not self.children:
             raise ValueError("Missing children.")
+
+        str_builder = ""
+        for child in self.children:
+            str_builder += child.to_html()
+
+        return f"<{self.tag}>{str_builder}</{self.tag}>"
+
+    def __repr__(self):
+        return f"ParentNode({self.tag}, {self.children}, {self.props})"
+
