@@ -35,6 +35,7 @@ def main():
         ],
     )
     print(f"parent node -> {parent_node.__repr__()}")
+    print(parent_node)
     print(f"attempt to use to_html")
     parent_node.to_html()
 if __name__ == "__main__":

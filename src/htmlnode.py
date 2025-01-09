@@ -15,13 +15,12 @@ class HTMLNode:
     
     def props_to_html(self):
         if not self.props:
-            print("No props found! Returning empty string.")
             return ""
         # Make copy to ensure no accidental alterations
         test_props = self.props.copy()
         props_builder = list(map(lambda x: f' {x}="{test_props[x]}"', test_props))
         #print(" ".join(props_builder))
-        return " ".join(props_builder)
+        return "".join(props_builder)
 
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props}"
