@@ -1,5 +1,6 @@
 from textnode import TextNode
 from textnode import TextType
+from textnode import text_node_to_html_node
 from htmlnode import HTMLNode
 from htmlnode import LeafNode
 from htmlnode import ParentNode
@@ -38,5 +39,8 @@ def main():
     print(parent_node)
     print(f"attempt to use to_html")
     parent_node.to_html()
+    print("--------------")
+    print("TextNode -> HTMLNode")
+    print(text_node_to_html_node(test_node))
 if __name__ == "__main__":
     main()
