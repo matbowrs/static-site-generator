@@ -4,6 +4,7 @@ from textnode import text_node_to_html_node
 from htmlnode import HTMLNode
 from htmlnode import LeafNode
 from htmlnode import ParentNode
+from manipulate_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 def main():
     # Text Nodes
@@ -42,5 +43,26 @@ def main():
     print("--------------")
     print("TextNode -> HTMLNode")
     print(text_node_to_html_node(test_node))
+
+    # SPLIT
+    print("--------------")
+    print("--------------")
+    print("--------------")
+    print("--------------")
+    print("SPLIT")
+    node = TextNode(
+            "This is text with a **bolded** word and **another**", TextType.TEXT
+        )
+    new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+    print(f"new_nodes double bold **: {new_nodes}")
+
+    print("EXTRACT")
+    print("--------------")
+    print("--------------")
+    print("--------------")
+    text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+    print(extract_markdown_images(text))
+    text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+    print(extract_markdown_links(text))
 if __name__ == "__main__":
     main()
