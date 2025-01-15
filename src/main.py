@@ -75,8 +75,11 @@ def main():
     print("--------------")
     print("NODE LINK/IMAGE EXTRACT")
     link_node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.TEXT)
-    image_node = TextNode("This is text with an image ![to boot dev](https://i.imgur.com/1We43fdG) and ![to youtube](https://i.imgur.com/GdfHrE2S)", TextType.TEXT)
     print(split_nodes_link([link_node]))
+    image_node = TextNode("This is text with an image ![to boot dev](https://i.imgur.com/1We43fdG) and ![to youtube](https://i.imgur.com/GdfHrE2S)", TextType.TEXT)
     print(split_nodes_image([image_node]))
+    link_node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and a link [to youtube](https://www.youtube.com)", TextType.TEXT)
+    linked_nodes = split_nodes_link([link_node])
+    print(linked_nodes)
 if __name__ == "__main__":
     main()

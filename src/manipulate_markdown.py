@@ -56,33 +56,45 @@ def extract_markdown_links(text):
 def split_nodes_image(old_nodes):
     new_nodes = []
     for node in old_nodes:
-        images_tuple = extract_markdown_links(node.text)
-        images_dict = dict(images_tuple)
+        #images_tuple = extract_markdown_links(node.text)
+        #print(f"images_tuple: {images_tuple}")
         split_text = re.split(r"!\[(.*?)\]\((.*?)\)", node.text)
         split_text = remove_nulls(split_text)
-        for text in split_text:
-            if text in images_dict:
-                new_nodes.append(TextNode(text, TextType.LINK, images_dict[text]))
-            elif text not in images_dict.values():
-                new_nodes.append(TextNode(text, TextType.TEXT, None))
+        # Case for when there is just the link
+        if len(split_text) == 2:
+            new_nodes.append(TextNode(split_text[0], TextType.IMAGE, split_text[1]))
+            break
+        #print(f"split_text: {split_text}")
+        for i in range(0, len(split_text), 3):
+            if i+2 < len(split_text):
+                print(split_text[i+1])
+                print(split_text[i+2])
+                new_nodes.append(TextNode(split_text[i], TextType.TEXT, None))
+                new_nodes.append(TextNode(split_text[i+1], TextType.IMAGE, split_text[i+2]))
+            else:
+                new_nodes.append(TextNode(split_text[i], TextType.TEXT, None))
+        #print(new_nodes)
     return new_nodes
 
 def split_nodes_link(old_nodes):
     new_nodes = []
     for node in old_nodes:
-        links_tuple = extract_markdown_links(node.text)
+        #print(f"node.text: {node.text}")
+        #links_tuple = extract_markdown_links(node.text)
         #print(f"links_tuple: {links_tuple}")
-        links_dict = dict(links_tuple)
-        # Split the text on the regex used in the function above
-        # This makes it easier to parse out what will be a
-        # TextType.LINK and a TextType.TEXT type
         split_text = re.split(r"\[(.*?)\]\((.*?)\)", node.text)
         split_text = remove_nulls(split_text)
-        #print(f"split_text: {split_text}")
-        for text in split_text:
-            if text in links_dict:
-                new_nodes.append(TextNode(text, TextType.LINK, links_dict[text]))
-            elif text not in links_dict.values():
-                new_nodes.append(TextNode(text, TextType.TEXT, None))
-
+        # Case for when there is just the link
+        if len(split_text) == 2:
+            new_nodes.append(TextNode(split_text[0], TextType.LINK, split_text[1]))
+            break
+        #print(split_text)
+        for i in range(0, len(split_text), 3):
+            if i+2 < len(split_text):
+                #print(split_text[i+1])
+                #print(split_text[i+2])
+                new_nodes.append(TextNode(split_text[i], TextType.TEXT, None))
+                new_nodes.append(TextNode(split_text[i+1], TextType.LINK, split_text[i+2]))
+            else:
+                new_nodes.append(TextNode(split_text[i], TextType.TEXT, None))
     return new_nodes
