@@ -9,7 +9,8 @@ from manipulate_markdown import (
     extract_markdown_images, 
     extract_markdown_links,
     split_nodes_link,
-    split_nodes_image
+    split_nodes_image,
+    text_to_textnodes
 )
 
 def main():
@@ -81,5 +82,12 @@ def main():
     link_node = TextNode("This is text with a link [to boot dev](https://www.boot.dev) and a link [to youtube](https://www.youtube.com)", TextType.TEXT)
     linked_nodes = split_nodes_link([link_node])
     print(linked_nodes)
+    print("--------------")
+    print("--------------")
+    print("--------------")
+    print("TEXT_TO_TEXTNODES")
+    text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+    text_to_textnodes(text)
+
 if __name__ == "__main__":
     main()

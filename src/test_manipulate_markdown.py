@@ -4,6 +4,7 @@ from manipulate_markdown import extract_markdown_images
 from manipulate_markdown import extract_markdown_links
 from manipulate_markdown import split_nodes_link
 from manipulate_markdown import split_nodes_image
+from manipulate_markdown import text_to_textnodes
 from textnode import TextNode, TextType
 
 class TestTextNode(unittest.TestCase):
@@ -207,5 +208,34 @@ class TestTextNode(unittest.TestCase):
             ],
             new_nodes,
         )       
+
+    def test_text_to_textnodes(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        self.assertListEqual(text_to_textnodes(text), [
+            TextNode("This is ", TextType.TEXT, None), 
+            TextNode("text", TextType.BOLD, None), 
+            TextNode(" with an ", TextType.TEXT, None), 
+            TextNode("italic", TextType.ITALIC, None), 
+            TextNode(" word and a ", TextType.TEXT, None), 
+            TextNode("code block", TextType.CODE, None), 
+            TextNode(" and an ", TextType.TEXT, None), 
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), 
+            TextNode(" and a ", TextType.TEXT, None), 
+            TextNode("link", TextType.LINK, "https://boot.dev")
+        ])
+
+    def test_text_to_textnodes_mix(self):
+        text = "This is an *italic* word and a `code block` and a [link](https://boot.dev) and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg)"
+        self.assertListEqual(text_to_textnodes(text), [
+            TextNode("This is an ", TextType.TEXT, None), 
+            TextNode("italic", TextType.ITALIC, None), 
+            TextNode(" word and a ", TextType.TEXT, None), 
+            TextNode("code block", TextType.CODE, None), 
+            TextNode(" and a ", TextType.TEXT, None), 
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+            TextNode(" and an ", TextType.TEXT, None), 
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), 
+        ])
+
 if __name__ == "__main__":
     unittest.main()
