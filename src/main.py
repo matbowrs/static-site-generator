@@ -4,6 +4,8 @@ from textnode import text_node_to_html_node
 from htmlnode import HTMLNode
 from htmlnode import LeafNode
 from htmlnode import ParentNode
+from markdown_blocks import markdown_to_blocks
+from markdown_blocks import block_to_block_type
 from manipulate_markdown import (
     split_nodes_delimiter,
     extract_markdown_images, 
@@ -88,6 +90,51 @@ def main():
     print("TEXT_TO_TEXTNODES")
     text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
     text_to_textnodes(text)
+    print("--------------")
+    print("--------------")
+    print("--------------")
+    print("MARKDOWN_TO_BLOCKS")
+    md = '''
+        # This is a heading
 
+        This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+        * This is the first list item in a list block
+        * This is a list item
+        * This is another list item
+    '''
+    print(markdown_to_blocks(md))
+    
+    print("--------------")
+    print("--------------")
+    print("--------------")
+    print("block_to_block_type")
+    test_md = "### This is an ideal heading!"
+    print(block_to_block_type(test_md))
+    test_md = "```This is a code block```"
+    print(block_to_block_type(test_md))
+    test_md = "> Here's a nice quote"
+    print(block_to_block_type(test_md))
+    test_md = "* This is a * unordered list"
+    print(block_to_block_type(test_md))
+    test_md = "- This is a - unordered list"
+    print(block_to_block_type(test_md))
+    test_md = "1. This is an ordered list"
+    print(block_to_block_type(test_md))
+    test_md = "2. This is an ordered list"
+    print(block_to_block_type(test_md))
+    test_md = "paragraph"
+    print(block_to_block_type(test_md))
+    print("\n\n\nEDGE CASES")
+    test_md = "####### This is an ideal heading but has 7!"
+    print(block_to_block_type(test_md))
+    test_md = "```should be a code block but nope!"
+    print(block_to_block_type(test_md))
+    test_md = "*should be an unordered list but nope!"
+    print(block_to_block_type(test_md))
+    test_md = "-should be an unordered list but nope!"
+    print(block_to_block_type(test_md))
+    test_md = "1.should be an ordered list but nope!"
+    print(block_to_block_type(test_md))
 if __name__ == "__main__":
     main()
