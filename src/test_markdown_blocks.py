@@ -24,7 +24,7 @@ This is the same paragraph on a new line
         )
 
     def test_markdown_to_blocks_newlines(self):
-        md = """
+        md = '''
 This is **bolded** paragraph
 
 
@@ -35,7 +35,7 @@ This is the same paragraph on a new line
 
 * This is a list
 * with items
-"""
+'''
         blocks = markdown_to_blocks(md)
         self.assertEqual(
             blocks,
@@ -45,38 +45,6 @@ This is the same paragraph on a new line
                 "* This is a list\n* with items",
             ],
         )
-
-
-    def x_test_markdown_to_blocks(self):
-        markdown_text = '''
-            # This is a heading
-
-            This is a paragraph of text. It has some **bold** and *italic* words inside of it.
-
-            * This is the first list item in a list block
-            * This is a list item
-            * This is another list item
-        '''
-        md = markdown_to_blocks(markdown_text)
-        self.assertListEqual(md, [
-            "# This is a heading",
-            "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
-            "* This is the first list item in a list block * This is a list item * This is another list item",
-        ])
-
-    def x_test_markdown_to_blocks_2(self):
-        markdown_text = '''
-            # This is a heading
-
-            * This is the first list item in a list block
-            * This is a list item
-        '''
-        md = markdown_to_blocks(markdown_text)
-        print(f"\n\n\n{md}\n\n\n")
-        self.assertListEqual(md, [
-            "# This is a heading",
-            "* This is the first list item in a list block * This is a list item",
-        ])
 
     def test_block_to_block_type(self):
         test_md = "# This is an ideal heading!"
@@ -101,7 +69,7 @@ This is the same paragraph on a new line
         self.assertEqual(block_to_block_type(test_md), "paragraph")
 
     def test_block_to_block_type_edge_cases(self):
-        test_md = "####### This is an ideal heading!"
+        test_md = "####### This is not an ideal heading!"
         self.assertEqual(block_to_block_type(test_md), "paragraph")
         test_md = "```should be a code block but nope!"
         self.assertEqual(block_to_block_type(test_md), "paragraph")

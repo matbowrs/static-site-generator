@@ -6,6 +6,7 @@ from htmlnode import LeafNode
 from htmlnode import ParentNode
 from markdown_blocks import markdown_to_blocks
 from markdown_blocks import block_to_block_type
+from markdown_blocks import markdown_to_html
 from manipulate_markdown import (
     split_nodes_delimiter,
     extract_markdown_images, 
@@ -103,38 +104,12 @@ def main():
         * This is a list item
         * This is another list item
     '''
-    print(markdown_to_blocks(md))
-    
+    print(f"markdown_to_blocks: {markdown_to_blocks(md)}")
     print("--------------")
     print("--------------")
     print("--------------")
-    print("block_to_block_type")
-    test_md = "### This is an ideal heading!"
-    print(block_to_block_type(test_md))
-    test_md = "```This is a code block```"
-    print(block_to_block_type(test_md))
-    test_md = "> Here's a nice quote"
-    print(block_to_block_type(test_md))
-    test_md = "* This is a * unordered list"
-    print(block_to_block_type(test_md))
-    test_md = "- This is a - unordered list"
-    print(block_to_block_type(test_md))
-    test_md = "1. This is an ordered list"
-    print(block_to_block_type(test_md))
-    test_md = "2. This is an ordered list"
-    print(block_to_block_type(test_md))
-    test_md = "paragraph"
-    print(block_to_block_type(test_md))
-    print("\n\n\nEDGE CASES")
-    test_md = "####### This is an ideal heading but has 7!"
-    print(block_to_block_type(test_md))
-    test_md = "```should be a code block but nope!"
-    print(block_to_block_type(test_md))
-    test_md = "*should be an unordered list but nope!"
-    print(block_to_block_type(test_md))
-    test_md = "-should be an unordered list but nope!"
-    print(block_to_block_type(test_md))
-    test_md = "1.should be an ordered list but nope!"
-    print(block_to_block_type(test_md))
+    print("markdown to html node!")
+    markdown_to_html(md)
+
 if __name__ == "__main__":
     main()

@@ -24,13 +24,13 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     special_word = []
 
     for node in old_nodes:
-        print(f"node in split_nodes_delimiter: {node}")
+        #print(f"node in split_nodes_delimiter: {node}")
         if node.text_type == TextType.TEXT:
             special_word = get_special_words(node.text, delimiter)
-            print(f"special word: {special_word}")
+            #print(f"special word: {special_word}")
             if special_word:
                 delim_list = node.text.split(delimiter)
-                print(f"delim_list reset: {delim_list}")
+                #print(f"delim_list reset: {delim_list}")
                 if '' in delim_list:
                     delim_list = remove_nulls(delim_list)
                     #print(f"delim_list after nulls removed: {delim_list}")
