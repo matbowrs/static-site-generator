@@ -68,14 +68,19 @@ def block_to_code(block):
 
 def block_to_quote(block):
     print(f"block to quote: {block}")
-    if block.startswith(">"):
-        quote_text = get_text_from_md(block, ">")
-        print(quote_text)
-        quote_text = text_to_children(quote_text) 
-        print(quote_text)
-        return ParentNode("blockquote", quote_text)
-    else:
-        raise ValueError("> is not the beginning of the line.")
+    block = block.split("\n")
+    block = list(map(lambda x: x.strip(), block))
+    print(block)
+    quote_lines = []
+    for line in block:
+        if line.startswith(">"):
+            quote_lines.append(line.lstrip(">").strip())
+        else:
+            raise ValueError("> is not the beginning of the line.")
+    quotes = " ".join(quote_lines)
+    quote_children = text_to_children(quotes)
+    print(f"quote_children: {quote_children}")
+    return ParentNode("blockquote", quote_children)
 
 def block_to_ul(block):
     print("block to ul")

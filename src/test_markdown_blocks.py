@@ -122,7 +122,7 @@ This is the same paragraph on a new line
         node = markdown_to_html_node(md)
         html = node.to_html()
         print(f"\n\n\n\n {html}")
-        self.assertEqual(html, "<div><blockquote>Here is a great quote</blockquote><blockquote>Another fantastic quote</blockquote></div>")
+        self.assertEqual(html, "<div><blockquote>Here is a great quote! Another fantastic quote</blockquote></div>")
 
     def test_markdown_to_html_node(self):
         md = '''
