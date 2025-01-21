@@ -1,18 +1,12 @@
 import re
-from htmlnode import HTMLNode
-from textnode import TextType
-from textnode import TextNode
-from manipulate_markdown import split_nodes_delimiter, text_to_textnodes
+from htmlnode import ParentNode
+from textnode import text_node_to_html_node
+from manipulate_markdown import text_to_textnodes
 from manipulate_markdown import remove_nulls
 
 def markdown_to_blocks(markdown):
     md = markdown.split("\n\n")
     md = list(map(lambda x: x.strip(), md))
-    #for i in range(0, len(md)):
-    #    if md[i][0] == "*":
-    #        block = md[i].split()
-    #        cleaned_block = " ".join(block)
-    #        md[i] = cleaned_block
     return remove_nulls(md)
 
 def block_to_block_type(markdown_block):
@@ -29,10 +23,6 @@ def block_to_block_type(markdown_block):
     else:
         return "paragraph"
 
-def get_heading_depth(heading_text):
-    list_depth = re.findall(r"^#{1,6}(?!#)", heading_text)
-    return len(list_depth[0])
-
 def get_text_from_md(text, delim):
     txt = remove_nulls(text.split(delim))
     return txt[0].strip()
@@ -40,79 +30,102 @@ def get_text_from_md(text, delim):
 def text_to_children(text):
     children_nodes = []
     text_nodes = text_to_textnodes(text)
-    print(f"text_nodes: {text_nodes}") 
     for node in text_nodes:
-        print(node.text_type)
-        if node.text_type == TextType.BOLD:
-            children_nodes.append(HTMLNode("<b>", node.text))
-        elif node.text_type == TextType.ITALIC:
-            children_nodes.append(HTMLNode("<i>", node.text))
-        elif node.text_type == TextType.TEXT:
-            children_nodes.append(HTMLNode(value=node.text))
-        elif node.text_type == TextType.CODE:
-            children_nodes.append(HTMLNode("<code>", node.text))
-        elif node.text_type == TextType.LINK:
-            children_nodes.append(HTMLNode("<a>", node.text, props={"href": node.url}))
-        elif node.text_type == TextType.IMAGE:
-            children_nodes.append(HTMLNode("<img>", props={"src": node.url, "alt": node.text}))
-        else:
-            raise TypeError("TextType is incorrect.")
-
-    print(children_nodes)
+        html_node = text_node_to_html_node(node)
+        children_nodes.append(html_node)
+    print(f"text_to_children: {children_nodes}")
     return children_nodes
     
-def lists_to_html(text):
-    children_nodes = []
-    split_items = text.split("\n")
+def get_heading_depth(heading_text):
+    list_depth = re.findall(r"^#{1,6}(?!#)", heading_text)
+    return len(list_depth[0])
 
-    # Strip off any leading / ending whitespace
-    split_items = list(map(lambda x: x.strip(), split_items))
-    # Loop through split_items again, this time creating a new HTMLNode object 
-    # For the text, remove the '*' character and just grab the text.
-    print(split_items)
-    if "*" in split_items[0]:
-        print(f"loop nodes *: {split_items}")
-        list_nodes = list(map(lambda x: HTMLNode("<li>", get_text_from_md(x, "*")), split_items))
-    elif "-" in split_items[0]:
-        print(f"loop nodes -: {split_items}")
-        list_nodes = list(map(lambda x: HTMLNode("<li>", get_text_from_md(x, "-")), split_items))
+def block_to_heading(block):
+    heading_depth = get_heading_depth(block)
+    heading_text = get_text_from_md(block, "#")
+    heading_children = text_to_children(heading_text)
+    #print(ParentNode(f"<h{heading_depth}>", heading_children))
+    return ParentNode(f"h{heading_depth}", heading_children)
+
+def block_to_paragraph(block):
+    #print("block to paragraph")
+    #print(block)
+    split_block = block.split("\n")
+    split_block = list(map(lambda x: x.strip(), split_block))
+    #print(split_block)
+    paragraph_children = " ".join(split_block)
+    paragraph_children = text_to_children(paragraph_children)
+    print(ParentNode("p", paragraph_children))
+    return ParentNode("p", paragraph_children)
+
+def block_to_code(block):
+    print("block to code")
+    code_text = get_text_from_md(block, "```")
+    print(code_text)
+    code_children = text_to_children(code_text)
+    code_node = ParentNode("code", code_children)
+    return ParentNode("pre", [code_node])
+
+def block_to_quote(block):
+    print(f"block to quote: {block}")
+    if block.startswith(">"):
+        quote_text = get_text_from_md(block, ">")
+        print(quote_text)
+        quote_text = text_to_children(quote_text) 
+        print(quote_text)
+        return ParentNode("blockquote", quote_text)
     else:
-        raise ValueError("Improper list found. Please ensure lists are either ordered - or unordered *.")
+        raise ValueError("> is not the beginning of the line.")
 
-    # TODO: what about ordered lists??
-    # TODO: extend later for bold / italics in lists?
-    return list_nodes  
+def block_to_ul(block):
+    print("block to ul")
+    lines = block.split("\n")
+    list_items = []
+    for line in lines:
+        # Disregard the * or - , we just want the text
+        line = line.strip()
+        text = line[2:]
+        print(f"ul text: {text}")
+        children = text_to_children(text)
+        list_items.append(ParentNode("li", children))
+    return ParentNode("ul", list_items)
 
-def markdown_to_html(markdown):
-    html_nodes = []
-    blocks_list = markdown_to_blocks(markdown) 
-    print(blocks_list)
-    
-    for block in blocks_list:
-        block_type = block_to_block_type(block)
-        print(block_type)
-        if block_type == "heading":
-            heading_depth = get_heading_depth(block)
-            heading_text = get_text_from_md(block, "#")
-            heading_children = text_to_children(heading_text)
-            html_nodes.append(HTMLNode(f"<h{heading_depth}>", children=heading_children))
-        elif block_type == "paragraph":
-            children_nodes = text_to_children(block)
-            html_nodes.append(HTMLNode("<p>", children=children_nodes))
-        elif block_type == "unordered_list":
-            print(f"unordered list!!!!!")
-            unordered_list_nodes = lists_to_html(block)
-            print(unordered_list_nodes)
-            html_nodes.append(HTMLNode("<ul>", children=unordered_list_nodes))
-        elif block_type == "ordered_list":
-            ordered_list_nodes = lists_to_html(block)
-            html_nodes.append(HTMLNode("<ol>", children=ordered_list_nodes))
-        elif block_type == "quote":
-            quote_text = get_text_from_md(block, ">")
-            html_nodes.append(HTMLNode(f"<blockquote>", quote_text))
-        else:
-            raise TypeError("block_type does not exist")
-    print(f"html nodes! {html_nodes}")
-    print(HTMLNode("<div>", children=html_nodes))
-    return HTMLNode("<div>", children=html_nodes)
+def block_to_ol(block):
+    print("block to ol")
+    lines = block.split("\n")
+    list_items = []
+    for line in lines:
+        # Disregard the 1. 2. , etc. 
+        line = line.strip()
+        text = line[3:]
+        children = text_to_children(text)
+        list_items.append(ParentNode("li", children))
+    return ParentNode("ol", list_items)
+
+def block_to_html_node(block):
+    print("block to html node")
+    print(block)
+    block_type = block_to_block_type(block)
+    if block_type == "heading":
+        return block_to_heading(block)
+    if block_type == "paragraph":
+        return block_to_paragraph(block)
+    if block_type == "code":
+        return block_to_code(block)
+    if block_type == "ordered_list":
+        return block_to_ol(block)
+    if block_type == "unordered_list":
+        return block_to_ul(block)
+    if block_type == "quote":
+        return block_to_quote(block)
+    raise ValueError("Block type is incorrect")
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    children = []
+    for block in blocks:
+        html_node = block_to_html_node(block)
+        children.append(html_node)
+    print(ParentNode("div", children=children))
+    return ParentNode("div", children=children)
 

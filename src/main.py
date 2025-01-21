@@ -6,7 +6,7 @@ from htmlnode import LeafNode
 from htmlnode import ParentNode
 from markdown_blocks import markdown_to_blocks
 from markdown_blocks import block_to_block_type
-from markdown_blocks import markdown_to_html
+from markdown_blocks import markdown_to_html_node
 from manipulate_markdown import (
     split_nodes_delimiter,
     extract_markdown_images, 
@@ -98,18 +98,27 @@ def main():
     md = '''
         # This is a heading
 
-        This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+        This is a paragraph of text. It has some **bold** and *italic* words inside of it. ```code```
+        Maybe a new line here.
 
-        * This is the first list item in a list block
-        * This is a list item
-        * This is another list item
+        ```code here!```
+
+        > a quote
+
+        - This is the first list item in a list block
+        - This is a *list* item
+        - This is another list item
+
+        1. This is a list item
+        2. This is **another** list item
     '''
     print(f"markdown_to_blocks: {markdown_to_blocks(md)}")
     print("--------------")
     print("--------------")
     print("--------------")
     print("markdown to html node!")
-    markdown_to_html(md)
+    md_to_html = markdown_to_html_node(md)
+    print(md_to_html.to_html())
 
 if __name__ == "__main__":
     main()

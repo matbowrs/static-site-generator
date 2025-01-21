@@ -110,14 +110,8 @@ def split_nodes_link(old_nodes):
 def text_to_textnodes(text):
     new_node = TextNode(text, TextType.TEXT, None)
     bolded = split_nodes_delimiter([new_node], '**', TextType.BOLD)
-    #print(f"bolded -> {bolded}")
-    #print(f"type bolded -> {type(bolded)}")
     italic = split_nodes_delimiter(bolded, '*', TextType.ITALIC)
-    #print(f"italic -> {italic}")
     code_blocks = split_nodes_delimiter(italic, '`', TextType.CODE)
-    #print(f"code block -> {code_blocks}")
     images = split_nodes_image(code_blocks)
-    #print(f"images -> {images}")
     links = split_nodes_link(images)
-    #print(f"links -> {links}")
     return links
