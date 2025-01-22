@@ -1,3 +1,5 @@
+import os
+import shutil
 from textnode import TextNode
 from textnode import TextType
 from textnode import text_node_to_html_node
@@ -119,6 +121,56 @@ def main():
     print("markdown to html node!")
     md_to_html = markdown_to_html_node(md)
     print(md_to_html.to_html())
+    print("\n\n\n\n\n\n\n")
+    copy_source_to_dest("/Users/matthew/workspace/github.com/matbowrs/static-site-generator/static/", "/Users/matthew/workspace/github.com/matbowrs/static-site-generator/public_2/") 
+
+def copy_contents_to_dest(src, dest, src_contents):
+    print(f"Copying '{src_contents[0]}' to {dest}")
+
+    if os.path.isdir(f"{src}{src_contents[0]}"):
+        print("directory found")
+        os.mkdir(f"{dest}{src_contents[0]}")
+        shutil.copytree(f"{src}{src_contents[0]}", f"{dest}{src_contents[0]}", dirs_exist_ok=True)
+        src_contents.pop(0)
+    else:
+        print("file found")
+        shutil.copy(f"{src_contents[0]}", dest)
+        src_contents.pop(0)
+
+def setup_source_destination(src, dest):
+    if os.path.exists(src) and os.path.exists(dest):
+        print(f"Source path {src} and destination path {dest} exist.")
+        print(f"Deleting all content under {dest}") 
+        shutil.rmtree(dest)
+        os.mkdir(dest)
+    else:
+        if not os.path.exists(src) and not os.path.exists(dest):
+            print(f"Neither the source ({src}) path nor the destination path ({dest}) exist.")
+        elif os.path.exists(src):
+            print(f"Source path {src} exists, but destination path {dest} does not. Creating...")
+            os.mkdir(dest)
+            if os.path.exists(dest):
+                print("Path created successfully!")
+        else:
+            print(f"Destination path {dest} exists, but source path {src} does not.")
+
+def copy_source_to_dest(src, dest, src_index=0):
+    src_directory_contents = os.listdir(src)
+    if src_index == 0:
+        setup_source_destination(src, dest)
+
+    if len(src_directory_contents) > src_index:
+        print(f"Copying '{src_directory_contents[src_index]}' to {dest}")
+        if os.path.isdir(f"{src}{src_directory_contents[src_index]}"):
+            os.mkdir(f"{dest}{src_directory_contents[src_index]}")
+        else:
+            shutil.copy(f"{src}{src_directory_contents[src_index]}", dest)
+
+        src_index += 1
+        copy_source_to_dest(src, dest, src_index)
+    else:
+        print("Files copied!")
+        print(f"ls {dest} -> {os.listdir(dest)}")
 
 if __name__ == "__main__":
     main()
