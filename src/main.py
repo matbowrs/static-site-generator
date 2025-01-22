@@ -122,20 +122,7 @@ def main():
     md_to_html = markdown_to_html_node(md)
     print(md_to_html.to_html())
     print("\n\n\n\n\n\n\n")
-    copy_source_to_dest("/Users/matthew/workspace/github.com/matbowrs/static-site-generator/static/", "/Users/matthew/workspace/github.com/matbowrs/static-site-generator/public_2/") 
-
-def copy_contents_to_dest(src, dest, src_contents):
-    print(f"Copying '{src_contents[0]}' to {dest}")
-
-    if os.path.isdir(f"{src}{src_contents[0]}"):
-        print("directory found")
-        os.mkdir(f"{dest}{src_contents[0]}")
-        shutil.copytree(f"{src}{src_contents[0]}", f"{dest}{src_contents[0]}", dirs_exist_ok=True)
-        src_contents.pop(0)
-    else:
-        print("file found")
-        shutil.copy(f"{src_contents[0]}", dest)
-        src_contents.pop(0)
+    copy_source_to_dest("/Users/matthew/workspace/github.com/matbowrs/static-site-generator/static/", "/Users/matthew/workspace/github.com/matbowrs/static-site-generator/public/") 
 
 def setup_source_destination(src, dest):
     if os.path.exists(src) and os.path.exists(dest):
@@ -160,10 +147,11 @@ def copy_source_to_dest(src, dest, src_index=0):
         setup_source_destination(src, dest)
 
     if len(src_directory_contents) > src_index:
-        print(f"Copying '{src_directory_contents[src_index]}' to {dest}")
         if os.path.isdir(f"{src}{src_directory_contents[src_index]}"):
-            os.mkdir(f"{dest}{src_directory_contents[src_index]}")
+            print(f"Copying dir '{src_directory_contents[src_index]}' to {dest}")
+            shutil.copytree(f"{src}{src_directory_contents[src_index]}", f"{dest}{src_directory_contents[0]}")
         else:
+            print(f"Copying file '{src_directory_contents[src_index]}' to {dest}")
             shutil.copy(f"{src}{src_directory_contents[src_index]}", dest)
 
         src_index += 1
