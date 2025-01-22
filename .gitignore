@@ -1,4 +1,5 @@
 __pycache__/
 .DS_Store
-public/
-public_2/
+public/*
+content/*
+static/*

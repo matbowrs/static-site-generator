@@ -2,6 +2,7 @@ import unittest
 from manipulate_markdown import split_nodes_delimiter
 from manipulate_markdown import extract_markdown_images
 from manipulate_markdown import extract_markdown_links
+from manipulate_markdown import extract_title
 from manipulate_markdown import split_nodes_link
 from manipulate_markdown import split_nodes_image
 from manipulate_markdown import text_to_textnodes
@@ -236,6 +237,27 @@ class TestTextNode(unittest.TestCase):
             TextNode(" and an ", TextType.TEXT, None), 
             TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), 
         ])
+
+    def test_extract_title(self):
+        md = '''
+            # My header
+
+            Some text and paragraph
+
+            - a list
+        '''
+        title = extract_title(md)
+        self.assertEqual(title, "My header")
+
+    def test_extract_title_h2(self):
+        md = '''
+            ## My header
+
+            Some text and paragraph
+
+            - a list
+        '''
+        self.assertRaises(ValueError, extract_title, md)
 
 if __name__ == "__main__":
     unittest.main()

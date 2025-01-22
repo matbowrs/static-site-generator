@@ -115,3 +115,17 @@ def text_to_textnodes(text):
     images = split_nodes_image(code_blocks)
     links = split_nodes_link(images)
     return links
+
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    lines = remove_nulls(lines)
+    lines = list(map(lambda x: x.strip(), lines))
+    header = lines[0]
+    if header.startswith("# "):
+        title = header[2:]
+        print(title)
+        return title
+    else:
+        raise ValueError("Markdown does not start with <h1> (#)!")
+
+
