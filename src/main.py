@@ -39,39 +39,69 @@ def copy_source_to_dest(src, dest, src_index=0):
         print("Files copied!")
         print(f"ls {dest} -> {os.listdir(dest)}")
 
-def generate_page(from_path, template_path, dest_path):
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
-    md_content = ""
-    template_content = ""
-    if os.path.exists(from_path):
-        with open(from_path, encoding="utf-8") as f:
-            md_content = f.read()
-        print(md_content)
-    if os.path.exists(template_path):
-        with open(template_path, encoding="utf-8") as f:
-            template_content = f.read()
-        print(template_content)
-    html_content = markdown_to_html_node(md_content)
-    html = html_content.to_html()
-    title = extract_title(md_content)
-    print(template_content.replace("{{ Title }}", title))
-    template_content = template_content.replace("{{ Title }}", title)
-    print(template_content)
-    template_content = template_content.replace("{{ Content }}", html)
-    print(template_content)
+def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
+    dirs = []
+    files_to_process = []
+    dir_contents = os.listdir(dir_path_content)
 
-    if not os.path.exists(dest_path):
-        os.mkdir(dest_path)
+    for item in dir_contents:
+        print(item)
+        if os.path.isdir(f"{dir_path_content}/{item}"):
+            dirs.append(item)
+        elif os.path.isfile(f"{dir_path_content}/{item}"):
+            files_to_process.append(item)
+        else:
+            raise TypeError("Item was not a file, nor a directory. Could not process.")
+
+    print(f"dirs: {dirs}")
+    print(f"files: {files_to_process}")
+    # Generate page
+    if files_to_process:
+        for file in files_to_process:
+            md_content = ""
+            template_content = ""
+            with open(f"{dir_path_content}/{file}", encoding="utf-8") as f:
+                md_content = f.read()
+            #print(md_content)
+            
+            if os.path.exists(template_path):
+                with open(template_path, encoding="utf-8") as f:
+                    template_content = f.read()
+            #    print(template_content)
+
+            html_content = markdown_to_html_node(md_content)
+            html = html_content.to_html()
+            title = extract_title(md_content)
+            #print(template_content.replace("{{ Title }}", title))
+            template_content = template_content.replace("{{ Title }}", title)
+            #print(template_content)
+            template_content = template_content.replace("{{ Content }}", html)
+            #print(template_content)
     
-    with open(f"{dest_path}/index.html", "w") as f:
-        f.write(template_content)
 
+            if os.path.exists(f"{dest_dir_path}/index.html"):
+                print(f"index.html file found! Creating new one under the parent dir...")
+                parent_dir = dir_path_content.split("/")[-1]
+                os.mkdir(f"{dest_dir_path}/{parent_dir}")
+                print(f"parent_dir: {parent_dir}")
+                with open(f"{dest_dir_path}/{parent_dir}/index.html", "w") as f:
+                    f.write(template_content)
+            else:
+                print(f"No index.html file created yet! Creating...")
+                if not os.path.exists(dest_dir_path):
+                    os.mkdir(dest_dir_path)
+                with open(f"{dest_dir_path}/index.html", "w") as f:
+                    f.write(template_content)
 
+            files_to_process.pop(0)
+    
+    if dirs:
+        generate_page_recursive(f"{dir_path_content}/{dirs[0]}", template_path, dest_dir_path)
 def main():
     ssg = "/Users/matthew/workspace/github.com/matbowrs/static-site-generator"
     #copy_source_to_dest(f"{ssg}/static", f"{ssg}/public") 
     copy_source_to_dest(f"{ssg}/static", f"{ssg}/public") 
-    generate_page(f"{ssg}/content/index.md", f"{ssg}/template.html", f"{ssg}/public")
+    generate_page_recursive(f"{ssg}/content", f"{ssg}/template.html", f"{ssg}/public")
     
 if __name__ == "__main__":
     main()
